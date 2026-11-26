@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="scan.title">Escanear QR</title>
+  <link rel="icon" href="../../icons/icon32.png">
+  <link rel="stylesheet" href="../popup/popup.css">
+  <link rel="stylesheet" href="scan.css">
+  <script type="module" src="scan.js"></script>
+</head>
+<body>
+<main class="scan-page">
+  <h1 data-i18n="scan.title">Escanear QR</h1>
+
+  <p id="message" class="muted" hidden></p>
+
+  <section id="unlock" hidden>
+    <p class="muted" data-i18n="scan.unlockIntro">Introduce tu contraseña para continuar.</p>
+    <form id="unlock-form" class="stack">
+      <input type="password" name="password" required autocomplete="current-password" placeholder="Contraseña" data-i18n-placeholder="common.password">
+      <p class="error" data-error></p>
+      <button class="primary" type="submit" data-i18n="common.unlock">Desbloquear</button>
+    </form>
+  </section>
+
+  <section id="scanner" hidden>
+    <p class="muted" data-i18n="scan.intro">En Google Authenticator ve a Transferir cuentas → Exportar cuentas y acerca el QR a la cámara.
+      Si hay varios, pasa de uno a otro en el móvil y se irán añadiendo.</p>
+
+    <div class="camera mirror" id="camera">
+      <video id="video" playsinline muted></video>
+      <div class="frame"></div>
+    </div>
+
+    <div class="controls">
+      <label id="camera-field" hidden><span data-i18n="scan.camera">Cámara</span><select id="camera-select"></select></label>
+      <label class="check"><input type="checkbox" id="mirror" checked> <span data-i18n="scan.mirror">Espejo</span></label>
+    </div>
+
+    <p id="status" class="status" data-i18n="scan.starting">Iniciando cámara…</p>
+    <button type="button" id="btn-retry" hidden data-i18n="scan.retry">Reintentar</button>
+
+    <div id="pending" hidden>
+      <h2 data-i18n="scan.readList">Leídas</h2>
+      <p class="note" id="batch-info" hidden></p>
+      <ul id="preview-list" class="preview"></ul>
+      <p class="error" id="import-error"></p>
+      <div class="actions">
+        <button type="button" id="btn-cancel" data-i18n="common.discard">Descartar</button>
+        <button type="button" class="primary" id="btn-import" data-i18n="common.import">Importar</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="done" hidden>
+    <p id="done-text"></p>
+    <p class="muted" data-i18n="scan.doneHint">Los códigos ya están disponibles en la extensión.</p>
+    <button type="button" class="primary" id="btn-close" data-i18n="scan.close">Cerrar</button>
+  </section>
+
+  <div id="toast" class="toast" role="status" hidden></div>
+</main>
+</body>
+</html>

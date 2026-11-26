@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="select.title">Seleccionar QR</title>
+  <link rel="icon" href="../../icons/icon32.png">
+  <link rel="stylesheet" href="../popup/popup.css">
+  <link rel="stylesheet" href="select.css">
+  <script type="module" src="select.js"></script>
+</head>
+<body>
+  <header class="topline">
+    <span id="status" data-i18n="select.loading">Cargando captura…</span>
+    <button type="button" class="link" id="btn-cancel" data-i18n="common.cancel">Cancelar</button>
+  </header>
+  <div id="stage" hidden>
+    <img id="shot" alt="Captura de la pestaña" data-i18n-alt="select.alt" draggable="false">
+    <div id="selection" hidden></div>
+  </div>
+</body>
+</html>

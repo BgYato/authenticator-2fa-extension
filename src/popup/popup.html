@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Authenticator</title>
+  <link rel="stylesheet" href="popup.css">
+  <script type="module" src="popup.js"></script>
+</head>
+<body>
+<!-- Los textos se traducen al cargar (lib/i18n.js); el español del HTML es solo el valor por defecto. -->
+<main id="app">
+
+  <section data-view="loading"></section>
+
+  <section data-view="setup" hidden>
+    <h1 data-i18n="setup.title">Crear contraseña</h1>
+    <p class="muted" data-i18n="setup.intro">Cifra tus claves en este navegador. Si la olvidas no se puede recuperar.</p>
+    <form id="setup-form" class="stack">
+      <label><span data-i18n="common.password">Contraseña</span>
+        <input type="password" name="password" minlength="8" required autocomplete="new-password">
+      </label>
+      <label><span data-i18n="setup.repeat">Repetir contraseña</span>
+        <input type="password" name="confirm" minlength="8" required autocomplete="new-password">
+      </label>
+      <p class="error" data-error></p>
+      <button class="primary" type="submit" data-i18n="common.continue">Continuar</button>
+    </form>
+  </section>
+
+  <section data-view="unlock" hidden>
+    <h1 data-i18n="unlock.title">Bloqueado</h1>
+    <form id="unlock-form" class="stack">
+      <input type="password" name="password" required autocomplete="current-password" placeholder="Contraseña" data-i18n-placeholder="common.password">
+      <p class="error" data-error></p>
+      <button class="primary" type="submit" data-i18n="common.unlock">Desbloquear</button>
+    </form>
+  </section>
+
+  <section data-view="main" hidden>
+    <header class="bar icons">
+      <div class="title-line">
+        <h1 data-i18n="main.title">Códigos</h1>
+        <span id="site-chip" class="site-chip" hidden></span>
+      </div>
+      <nav>
+        <button class="icon-btn" id="btn-add" title="Añadir" aria-label="Añadir" data-i18n-title="main.add" data-i18n-label="main.add"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+        <button class="icon-btn" id="btn-settings" title="Ajustes" aria-label="Ajustes" data-i18n-title="main.settings" data-i18n-label="main.settings"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+        <button class="icon-btn" id="btn-lock" title="Bloquear" aria-label="Bloquear" data-i18n-title="main.lock" data-i18n-label="main.lock"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></button>
+      </nav>
+    </header>
+    <input type="search" id="search" placeholder="Buscar" autocomplete="off" title="↑ ↓ para elegir, Enter para usar"
+      data-i18n-placeholder="main.search" data-i18n-title="main.searchHint">
+    <div id="site-offer" class="offer" hidden>
+      <span id="site-offer-text"></span>
+      <button type="button" class="link" id="site-offer-yes" data-i18n="common.yes">Sí</button>
+      <button type="button" class="link" id="site-offer-no" data-i18n="common.no">No</button>
+    </div>
+    <div id="site-warning" class="banner" role="alert" hidden>
+      <div class="head"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg><span data-i18n="main.warnTitle">Posible web falsa</span></div>
+      <p id="site-warning-text"></p>
+      <div class="acts">
+        <button type="button" class="primary" id="site-warning-cancel" data-i18n="common.cancel">Cancelar</button>
+        <button type="button" id="site-warning-once" data-i18n="main.warnOnce">Usar una vez</button>
+        <button type="button" id="site-warning-remember" data-i18n="main.warnRemember">Usar y recordar este sitio</button>
+      </div>
+    </div>
+    <ul id="account-list" class="accounts"></ul>
+    <div id="empty" class="empty" hidden>
+      <p class="muted" data-i18n="main.empty">No hay cuentas todavía.</p>
+      <button class="primary" id="btn-add-empty" data-i18n="main.addAccounts">Añadir cuentas</button>
+    </div>
+  </section>
+
+  <section data-view="add" hidden>
+    <header class="bar">
+      <h1 data-i18n="add.title">Añadir</h1>
+      <nav><button class="link" data-back="main" data-i18n="common.back">Volver</button></nav>
+    </header>
+
+    <div id="dropzone" class="options">
+      <p class="muted" data-i18n="add.intro">En Google Authenticator: Transferir cuentas → Exportar cuentas.
+        Después lee el QR de una de estas formas.</p>
+      <button type="button" class="primary" id="btn-camera" data-i18n="add.camera">Escanear con la cámara</button>
+      <div class="split">
+        <button type="button" id="btn-capture" data-i18n="add.captureTab">Escanear pestaña</button>
+        <button type="button" id="btn-select-area" title="Marca a mano el recuadro donde está el QR"
+          data-i18n="add.selectArea" data-i18n-title="add.selectAreaHint">Seleccionar zona</button>
+      </div>
+      <button type="button" id="btn-upload" data-i18n="add.upload">Subir imagen</button>
+      <input type="file" id="file-input" accept="image/*" hidden>
+      <p class="muted small" data-i18n="add.dropHint">También puedes arrastrar o pegar una imagen aquí.</p>
+    </div>
+    <p class="note" id="add-status" hidden></p>
+    <p class="error" id="add-error"></p>
+
+    <div id="import-preview" hidden>
+      <p class="note" id="batch-info" hidden></p>
+      <ul id="preview-list" class="preview"></ul>
+      <div class="actions">
+        <button type="button" id="btn-cancel-import" data-i18n="common.discard">Descartar</button>
+        <button type="button" class="primary" id="btn-confirm-import" data-i18n="common.import">Importar</button>
+      </div>
+    </div>
+
+    <details>
+      <summary data-i18n="add.pasteUri">Pegar un enlace otpauth</summary>
+      <form id="uri-form" class="stack">
+        <textarea name="uri" rows="3" required spellcheck="false" placeholder="otpauth://…"></textarea>
+        <button type="submit" data-i18n="add.read">Leer</button>
+      </form>
+    </details>
+
+    <details>
+      <summary data-i18n="add.manual">Introducir la clave a mano</summary>
+      <form id="manual-form" class="stack">
+        <label><span data-i18n="field.issuer">Servicio</span><input name="issuer"></label>
+        <label><span data-i18n="field.account">Cuenta</span><input name="account"></label>
+        <label><span data-i18n="field.sites">Sitios</span><input name="domains" placeholder="github.com, gitlab.com" autocomplete="off"></label>
+        <p class="muted small hint" data-i18n="field.sitesHint">Dominios donde sugerir esta cuenta, separados por comas. Si el nombre del servicio coincide con la web, no hace falta.</p>
+        <label><span data-i18n="field.secret">Clave secreta</span><input name="secret" required autocomplete="off" spellcheck="false"></label>
+        <div class="grid">
+          <label><span data-i18n="field.type">Tipo</span><select name="type"><option value="totp">TOTP</option><option value="hotp">HOTP</option></select></label>
+          <label><span data-i18n="field.algorithm">Algoritmo</span><select name="algorithm"><option>SHA1</option><option>SHA256</option><option>SHA512</option></select></label>
+          <label><span data-i18n="field.digits">Dígitos</span><select name="digits"><option>6</option><option>8</option></select></label>
+          <label><span data-i18n="field.period">Periodo</span><input name="period" type="number" value="30" min="1"></label>
+        </div>
+        <p class="error" data-error></p>
+        <button class="primary" type="submit" data-i18n="add.submit">Añadir</button>
+      </form>
+    </details>
+  </section>
+
+  <section data-view="edit" hidden>
+    <header class="bar">
+      <h1 data-i18n="edit.title">Editar</h1>
+      <nav><button class="link" data-back="main" data-i18n="common.back">Volver</button></nav>
+    </header>
+    <form id="edit-form" class="stack">
+      <label><span data-i18n="field.issuer">Servicio</span><input name="issuer"></label>
+      <label><span data-i18n="field.account">Cuenta</span><input name="account"></label>
+      <label><span data-i18n="field.sites">Sitios</span><input name="domains" placeholder="github.com, gitlab.com" autocomplete="off"></label>
+      <p class="muted small hint" data-i18n="field.sitesHint">Dominios donde sugerir esta cuenta, separados por comas. Si el nombre del servicio coincide con la web, no hace falta.</p>
+      <button class="primary" type="submit" data-i18n="edit.save">Guardar</button>
+    </form>
+    <button type="button" class="link danger" id="btn-delete" data-i18n="edit.delete">Eliminar cuenta</button>
+  </section>
+
+  <section data-view="settings" hidden>
+    <header class="bar">
+      <h1 data-i18n="settings.title">Ajustes</h1>
+      <nav><button class="link" data-back="main" data-i18n="common.back">Volver</button></nav>
+    </header>
+    <section class="sec">
+      <h3 data-i18n="settings.secGeneral">General</h3>
+      <div class="box">
+        <label><span data-i18n="settings.language">Idioma</span>
+          <select id="language">
+            <option value="auto" data-i18n="settings.languageAuto">Automático (idioma del navegador)</option>
+            <!-- settings.js añade los idiomas disponibles -->
+          </select>
+        </label>
+        <p class="row-line"><span data-i18n="settings.shortcut">Atajo para abrir:</span> <kbd id="shortcut">…</kbd>
+          <button type="button" class="link" id="btn-shortcut" data-i18n="settings.change">Cambiar</button></p>
+      </div>
+    </section>
+    <section class="sec">
+      <h3 data-i18n="settings.secSecurity">Seguridad</h3>
+      <div class="box">
+        <label><span data-i18n="settings.autolock">Bloquear automáticamente</span>
+          <select id="autolock">
+            <option value="5" data-i18n="settings.after5m">Tras 5 minutos</option>
+            <option value="15" data-i18n="settings.after15m">Tras 15 minutos</option>
+            <option value="60" data-i18n="settings.after1h">Tras 1 hora</option>
+            <option value="0" data-i18n="settings.onBrowserClose">Al cerrar el navegador</option>
+          </select>
+        </label>
+        <p class="muted small hint" data-i18n="settings.autolockHint">También se bloquea al bloquear la pantalla del equipo.</p>
+        <details>
+          <summary data-i18n="settings.changePassword">Cambiar contraseña</summary>
+          <form id="password-form" class="stack">
+            <input type="password" name="current" required autocomplete="current-password" placeholder="Contraseña actual" data-i18n-placeholder="settings.currentPassword">
+            <input type="password" name="password" minlength="8" required autocomplete="new-password" placeholder="Nueva contraseña" data-i18n-placeholder="settings.newPassword">
+            <input type="password" name="confirm" minlength="8" required autocomplete="new-password" placeholder="Repetir nueva contraseña" data-i18n-placeholder="settings.repeatNewPassword">
+            <p class="error" data-error></p>
+            <button type="submit" data-i18n="settings.change">Cambiar</button>
+          </form>
+        </details>
+      </div>
+    </section>
+    <section class="sec">
+      <h3 data-i18n="settings.secUse">Al usar un código</h3>
+      <div class="box">
+        <label class="check"><input type="checkbox" id="autofill"> <span data-i18n="settings.autofill">Rellenar el código en la página</span></label>
+        <p class="muted small hint" data-i18n="settings.autofillHint">Al pulsar un código, si la página tiene un campo para él se rellena en vez de copiarse.</p>
+        <label><span data-i18n="settings.clipboard">Borrar el código copiado</span>
+          <select id="clipboard-clear">
+            <option value="10" data-i18n="settings.after10s">Tras 10 segundos</option>
+            <option value="20" data-i18n="settings.after20s">Tras 20 segundos</option>
+            <option value="30" data-i18n="settings.after30s">Tras 30 segundos</option>
+            <option value="60" data-i18n="settings.after1m">Tras 1 minuto</option>
+            <option value="120" data-i18n="settings.after2m">Tras 2 minutos</option>
+            <option value="0" data-i18n="settings.never">Nunca</option>
+          </select>
+        </label>
+        <label class="check"><input type="checkbox" id="clipboard-verify"> <span data-i18n="settings.clipboardVerify">No borrar si después copias otra cosa</span></label>
+        <p class="muted small hint" data-i18n="settings.clipboardVerifyHint">Pide permiso para leer el portapapeles; solo se usa para comprobar si el código sigue ahí. Sin él, se vacía aunque hayas copiado otra cosa.</p>
+      </div>
+    </section>
+    <section class="sec">
+      <h3 data-i18n="settings.backup">Copia de seguridad</h3>
+      <div class="box">
+        <p class="muted small" data-i18n="settings.backupHint">Un archivo cifrado con tu contraseña actual. Para restaurarlo te pedirá esa contraseña.</p>
+        <div class="pair">
+          <button type="button" id="btn-export" data-i18n="settings.exportBackup">Exportar copia</button>
+          <button type="button" id="btn-import-backup" data-i18n="settings.importBackup">Importar copia</button>
+        </div>
+        <input type="file" id="backup-file" accept=".json,application/json" hidden>
+        <form id="backup-form" class="stack backup-form" hidden>
+          <p class="muted small" id="backup-name"></p>
+          <input type="password" name="password" required autocomplete="off" placeholder="Contraseña de la copia" data-i18n-placeholder="settings.backupPassword">
+          <p class="error" data-error></p>
+          <div class="actions">
+            <button type="button" id="btn-backup-cancel" data-i18n="common.cancel">Cancelar</button>
+            <button type="submit" class="primary" data-i18n="settings.restore">Restaurar</button>
+          </div>
+        </form>
+      </div>
+    </section>
+    <section class="sec danger">
+      <h3 data-i18n="settings.secDanger">Zona de peligro</h3>
+      <div class="box">
+        <button type="button" class="link danger" id="btn-wipe" data-i18n="settings.wipe">Borrar todas las cuentas y la contraseña</button>
+      </div>
+    </section>
+    <p class="muted small about" id="about"></p>
+  </section>
+
+  <dialog id="reauth">
+    <form id="reauth-form" class="stack">
+      <p id="reauth-text"></p>
+      <input type="password" name="password" required autocomplete="current-password" placeholder="Contraseña" data-i18n-placeholder="common.password">
+      <p class="error" data-error></p>
+      <div class="pair">
+        <button type="button" id="reauth-cancel" data-i18n="common.cancel">Cancelar</button>
+        <button type="submit" class="primary" data-i18n="common.continue">Continuar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" hidden></div>
+</main>
+</body>
+</html>

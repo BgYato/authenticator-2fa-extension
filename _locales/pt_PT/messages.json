@@ -1,0 +1,11 @@
+{
+  "extName": {
+    "message": "Authenticator 2FA"
+  },
+  "extDescription": {
+    "message": "Mostra os seus códigos 2FA (TOTP/HOTP) importados do Google Authenticator, cifrados localmente."
+  },
+  "cmdOpen": {
+    "message": "Abrir Authenticator 2FA"
+  }
+}
