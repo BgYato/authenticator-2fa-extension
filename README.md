@@ -4,7 +4,7 @@ Extensión de Chrome (Manifest V3) para ver tus códigos 2FA (TOTP/HOTP) desde e
 Importa las cuentas desde el **QR de exportación de Google Authenticator**
 (`otpauth-migration://`), desde QR/enlaces estándar `otpauth://` o con la clave a mano.
 
-**Versión 1.0.0** · Hecho por [Andrés Yate](https://github.com/BgYato) · Licencia [MIT](LICENSE)
+**Versión 1.0.1** · Hecho por [Andrés Yate](https://github.com/BgYato) · Licencia [MIT](LICENSE) · [Política de privacidad](PRIVACY.md) · [Cambios](CHANGELOG.md)
 
 > **Nota:** Google no ofrece una API para leer los códigos de Authenticator asociados a la
 > cuenta de Google (la sincronización es interna de la app). Por eso todas las extensiones
@@ -65,7 +65,7 @@ necesario: `manifest.json`, `LICENSE`, `_locales/`, `icons/` y `src/`. Necesita 
 con **Cargar descomprimida** en `chrome://extensions`. Así compruebas que no falta ningún archivo.
 
 ```bash
-unzip dist/authenticator-extension-1.0.0.zip -d ~/authenticator-1.0.0
+unzip dist/authenticator-extension-1.0.1.zip -d ~/authenticator-1.0.1
 ```
 
 **Publicar en la Chrome Web Store.**
@@ -74,10 +74,11 @@ unzip dist/authenticator-extension-1.0.0.zip -d ~/authenticator-1.0.0
    hay que registrarse como desarrollador, con un pago único de 5 USD).
 2. **Nuevo elemento** → sube el zip.
 3. Completa la ficha (descripción, icono de 128 px, al menos una captura de 1280×800 o 640×400),
-   la justificación de cada permiso y la URL de la política de privacidad.
+   la justificación de cada permiso y la URL de la política de privacidad
+   (`https://github.com/BgYato/authenticator-2fa-extension/blob/main/PRIVACY.md`).
 4. **Enviar para revisión**.
 
-**Nuevas versiones.** Sube `version` en `manifest.json` (y en `package.json`): 1.0.1 para
+**Nuevas versiones.** Anota los cambios en `CHANGELOG.md` y sube `version` en `manifest.json` (y en `package.json`): 1.0.2 para
 correcciones, 1.1.0 para funciones nuevas. La Web Store rechaza una versión igual o menor que
 la publicada. Después `npm run package` y en el Dashboard **Paquete → Subir nuevo paquete**.
 
@@ -105,6 +106,8 @@ la publicada. Después `npm run package` y en el Dashboard **Paquete → Subir n
 ```
 manifest.json          versión, autor (author) y enlace del proyecto (homepage_url)
 LICENSE                licencia MIT
+PRIVACY.md             política de privacidad (la que se enlaza en la Chrome Web Store)
+CHANGELOG.md           cambios de cada versión
 _locales/              nombre y descripción de la extensión en cada idioma (los usa Chrome)
 icons/                 iconos de la extensión
 src/background.js      service worker: autobloqueo, bloqueo con la pantalla y vaciado del portapapeles
@@ -186,6 +189,8 @@ Para añadir un idioma:
 ## Autor y licencia
 
 Hecho por **Andrés Yate** — [github.com/BgYato](https://github.com/BgYato).
+
+La extensión no recoge ni envía ningún dato: ver la [política de privacidad](PRIVACY.md).
 
 Publicado bajo licencia [MIT](LICENSE). Incluye [jsQR](https://github.com/cozmo/jsQR)
 (Apache 2.0) para leer los códigos QR.

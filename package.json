@@ -1,6 +1,6 @@
 {
   "name": "authenticator-extension",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Extensión de navegador para ver códigos 2FA importados desde Google Authenticator",
   "scripts": {
     "postinstall": "node scripts/vendor.mjs",
@@ -8,7 +8,7 @@
     "package": "bash scripts/package.sh"
   },
   "author": "Andrés Yate",
-  "homepage": "https://github.com/BgYato",
+  "homepage": "https://github.com/BgYato/authenticator-2fa-extension",
   "license": "MIT",
   "type": "module",
   "devDependencies": {
