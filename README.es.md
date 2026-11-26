@@ -8,6 +8,8 @@ Importa las cuentas desde el **QR de exportación de Google Authenticator**
 
 **Versión 1.0.1** · Hecho por [Andrés Yate](https://github.com/BgYato) · Licencia [MIT](LICENSE) · [Política de privacidad](PRIVACY.md) · [Cambios](CHANGELOG.md)
 
+![Authenticator 2FA: tus códigos 2FA, con la web abierta primero](store/en/captura-1-codigos.png)
+
 > **Nota:** Google no ofrece una API para leer los códigos de Authenticator asociados a la
 > cuenta de Google (la sincronización es interna de la app). Por eso todas las extensiones
 > de este tipo trabajan con el QR de exportación, igual que esta.
