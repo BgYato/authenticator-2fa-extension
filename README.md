@@ -1,199 +1,201 @@
-# Authenticator 2FA — extensión de navegador
+# Authenticator 2FA — browser extension
 
-Extensión de Chrome (Manifest V3) para ver tus códigos 2FA (TOTP/HOTP) desde el navegador.
-Importa las cuentas desde el **QR de exportación de Google Authenticator**
-(`otpauth-migration://`), desde QR/enlaces estándar `otpauth://` o con la clave a mano.
+**English** · [Español](README.es.md)
 
-**Versión 1.0.1** · Hecho por [Andrés Yate](https://github.com/BgYato) · Licencia [MIT](LICENSE) · [Política de privacidad](PRIVACY.md) · [Cambios](CHANGELOG.md)
+Chrome extension (Manifest V3) to view your 2FA codes (TOTP/HOTP) right in the browser.
+Import your accounts from the **Google Authenticator export QR code**
+(`otpauth-migration://`), from standard `otpauth://` QR codes and links, or by entering the key manually.
 
-> **Nota:** Google no ofrece una API para leer los códigos de Authenticator asociados a la
-> cuenta de Google (la sincronización es interna de la app). Por eso todas las extensiones
-> de este tipo trabajan con el QR de exportación, igual que esta.
+**Version 1.0.1** · Made by [Andrés Yate](https://github.com/BgYato) · [MIT](LICENSE) license · [Privacy policy](PRIVACY.md) · [Changelog](CHANGELOG.md)
 
-## Funcionalidades
+> **Note:** Google does not offer an API to read the Authenticator codes linked to a Google
+> account (syncing is internal to the app). That is why every extension of this kind works
+> with the export QR code, just like this one.
 
-- Importar el QR de exportación de Google Authenticator, también cuando son varios QR (lotes "1 de N").
-- **Escanear en vivo con la cámara** del ordenador: pones el móvil delante y se van sumando los QR según pasas de uno a otro.
-- Leer el QR de una imagen: subirla, arrastrarla, pegarla con Ctrl+V o **escanear la pestaña actual**.
-- **Seleccionar zona**: marca a mano el recuadro del QR sobre una captura de la pestaña (útil si el QR es pequeño o hay varios en pantalla).
-- Pegar un enlace `otpauth://` u `otpauth-migration://`, o meter la clave Base32 a mano.
-- Códigos TOTP con cuenta atrás en anillo y HOTP con contador. SHA1/SHA256/SHA512, 6 u 8 dígitos.
-- En los últimos 5 segundos se muestra también el código siguiente, para no tener que esperarlo.
-- Cada servicio lleva un avatar con su inicial y un color fijo, para encontrarlo de un vistazo.
-- Al usar un código, la propia fila confirma si se ha rellenado o copiado.
-- Copiar el código con un clic, buscar, editar nombres y eliminar cuentas.
-- Detección de duplicados al importar.
-- **Bóveda cifrada:** AES-GCM 256 con una clave derivada de tu contraseña maestra (PBKDF2-SHA256, 600 000 iteraciones).
-- Bloqueo automático configurable (5 min, 15 min, 1 h o al cerrar el navegador) y al bloquear la pantalla del equipo.
-- Límite de intentos de contraseña: tras 5 fallos seguidos hay que esperar (30 s, que se duplican con cada fallo, hasta 15 min).
-- Copia de seguridad cifrada para exportar y restaurar las cuentas.
-- Exportar la copia y borrar todo piden la contraseña otra vez, aunque la extensión esté desbloqueada.
-- **Cuentas del sitio abierto primero:** al abrir el popup en `github.com`, la cuenta de GitHub aparece arriba. Se deduce del nombre del servicio. Si usas una cuenta en una web que no reconoce, te pregunta si sugerirla ahí en adelante (y si dices que no, no vuelve a preguntar). También puedes asociar dominios en "Editar → Sitios".
-- **Rellenar el código en la página:** al pulsar un código, si la web tiene un campo de código (`one-time-code`, una casilla por dígito o un campo llamado "código", "otp"…) se rellena directamente en vez de copiarse. No envía el formulario. Desactivable en Ajustes.
-- **Aviso antiphishing:** si la web no es la de la cuenta pero se le parece (`g1thub.com`, `github-login.com`, `github.evil.com`) o la cuenta tiene sitios asociados y este no es ninguno, avisa antes de rellenar o copiar el código. Puedes cancelar, usarlo una vez o recordar el sitio.
-- **Atajo de teclado** `Ctrl+Shift+Y` para abrir el popup (se cambia en `chrome://extensions/shortcuts`). Con la búsqueda enfocada, ↑ ↓ eligen la cuenta y Enter la usa: atajo → Enter → código puesto.
-- El portapapeles se vacía unos segundos después de copiar (configurable). Opcionalmente, solo si todavía contiene el código, para no borrar lo que hayas copiado después.
-- En la búsqueda, Esc limpia el texto.
-- **Idiomas:** español, inglés, portugués y francés. Por defecto sigue el idioma del navegador (si no está disponible, inglés); se puede fijar otro en Ajustes → Idioma y se aplica al momento.
-- Al final de Ajustes se muestra la versión instalada y el autor, con enlace a su GitHub.
+## Features
 
-## Instalación (modo desarrollador)
+- Import the Google Authenticator export QR code, including when it is split into several QR codes ("1 of N" batches).
+- **Live scanning with your computer's camera**: hold your phone in front of it and the QR codes add up as you move from one to the next.
+- Read the QR code from an image: upload it, drag it, paste it with Ctrl+V or **scan the current tab**.
+- **Select area**: manually draw a box around the QR code on a capture of the tab (useful when the QR is small or there are several on screen).
+- Paste an `otpauth://` or `otpauth-migration://` link, or enter the Base32 key manually.
+- TOTP codes with a countdown ring and HOTP codes with a counter. SHA1/SHA256/SHA512, 6 or 8 digits.
+- During the last 5 seconds the next code is shown too, so you don't have to wait for it.
+- Each service gets an avatar with its initial and a fixed color, so you can spot it at a glance.
+- When you use a code, the row itself confirms whether it was filled in or copied.
+- Copy a code with one click, search, rename and delete accounts.
+- Duplicate detection when importing.
+- **Encrypted vault:** AES-GCM 256 with a key derived from your master password (PBKDF2-SHA256, 600,000 iterations).
+- Configurable auto-lock (5 min, 15 min, 1 h or when the browser closes), and also when the computer's screen locks.
+- Password attempt limit: after 5 failures in a row you have to wait (30 s, doubling with each failure, up to 15 min).
+- Encrypted backup to export and restore your accounts.
+- Exporting the backup and deleting everything ask for the password again, even if the extension is unlocked.
+- **Accounts for the open site first:** when you open the popup on `github.com`, the GitHub account appears at the top. It is inferred from the service name. If you use an account on a site it doesn't recognize, it asks whether to suggest it there from now on (if you say no, it won't ask again). You can also link domains in "Edit → Sites".
+- **Fill in the code on the page:** when you click a code, if the site has a code field (`one-time-code`, one box per digit, or a field named "code", "otp"…) it is filled in directly instead of copied. It does not submit the form. Can be turned off in Settings.
+- **Phishing warning:** if the site is not the account's site but looks like it (`g1thub.com`, `github-login.com`, `github.evil.com`), or the account has linked sites and this is none of them, it warns you before filling in or copying the code. You can cancel, use it once or remember the site.
+- **Keyboard shortcut** `Ctrl+Shift+Y` to open the popup (change it in `chrome://extensions/shortcuts`). With the search box focused, ↑ ↓ pick the account and Enter uses it: shortcut → Enter → code filled in.
+- The clipboard is cleared a few seconds after copying (configurable). Optionally, only if it still contains the code, so whatever you copied afterwards is not erased.
+- In the search box, Esc clears the text.
+- **Languages:** English, Spanish, Portuguese and French. By default it follows the browser language (English if not available); you can pick another one in Settings → Language and it applies immediately.
+- The end of Settings shows the installed version and the author, with a link to the project.
 
-```bash
-npm install        # descarga jsQR y lo copia a src/vendor/
-npm test           # tests unitarios (vectores RFC 4226/6238 y decodificación de migración)
-```
-
-1. Abre `chrome://extensions`.
-2. Activa **Modo de desarrollador**.
-3. Pulsa **Cargar descomprimida** y elige esta carpeta (la que contiene `manifest.json`).
-4. Fija la extensión en la barra de herramientas.
-
-También funciona en Edge, Brave y otros navegadores basados en Chromium.
-
-## Empaquetar y publicar
+## Installation (developer mode)
 
 ```bash
-npm test           # comprobar que todo pasa antes de empaquetar
-npm run package    # genera dist/authenticator-extension-<versión>.zip
+npm install        # downloads jsQR and copies it to src/vendor/
+npm test           # unit tests (RFC 4226/6238 vectors and migration decoding)
 ```
 
-El script (`scripts/package.sh`) toma la versión de `manifest.json` y mete en el zip solo lo
-necesario: `manifest.json`, `LICENSE`, `_locales/`, `icons/` y `src/`. Necesita el comando `zip`.
+1. Open `chrome://extensions`.
+2. Turn on **Developer mode**.
+3. Click **Load unpacked** and choose this folder (the one containing `manifest.json`).
+4. Pin the extension to the toolbar.
 
-**Probar el zip en local.** Chrome no instala un `.zip` directamente: descomprímelo y cárgalo
-con **Cargar descomprimida** en `chrome://extensions`. Así compruebas que no falta ningún archivo.
+It also works in Edge, Brave and other Chromium-based browsers.
+
+## Packaging and publishing
+
+```bash
+npm test           # make sure everything passes before packaging
+npm run package    # creates dist/authenticator-extension-<version>.zip
+```
+
+The script (`scripts/package.sh`) reads the version from `manifest.json` and puts only what is
+needed in the zip: `manifest.json`, `LICENSE`, `_locales/`, `icons/` and `src/`. It requires the `zip` command.
+
+**Testing the zip locally.** Chrome does not install a `.zip` directly: unzip it and load it
+with **Load unpacked** in `chrome://extensions`. This way you check that no file is missing.
 
 ```bash
 unzip dist/authenticator-extension-1.0.1.zip -d ~/authenticator-1.0.1
 ```
 
-**Publicar en la Chrome Web Store.**
+**Publishing on the Chrome Web Store.**
 
-1. Entra en el [Developer Dashboard](https://chrome.google.com/webstore/devconsole) (la primera vez
-   hay que registrarse como desarrollador, con un pago único de 5 USD).
-2. **Nuevo elemento** → sube el zip.
-3. Completa la ficha (descripción, icono de 128 px, al menos una captura de 1280×800 o 640×400),
-   la justificación de cada permiso y la URL de la política de privacidad
+1. Go to the [Developer Dashboard](https://chrome.google.com/webstore/devconsole) (the first time
+   you need to register as a developer, with a one-time fee of USD 5).
+2. **New item** → upload the zip.
+3. Fill in the listing (description, 128 px icon, at least one 1280×800 or 640×400 screenshot),
+   the justification for each permission and the privacy policy URL
    (`https://github.com/BgYato/authenticator-2fa-extension/blob/main/PRIVACY.md`).
-4. **Enviar para revisión**.
+4. **Submit for review**.
 
-**Nuevas versiones.** Anota los cambios en `CHANGELOG.md` y sube `version` en `manifest.json` (y en `package.json`): 1.0.2 para
-correcciones, 1.1.0 para funciones nuevas. La Web Store rechaza una versión igual o menor que
-la publicada. Después `npm run package` y en el Dashboard **Paquete → Subir nuevo paquete**.
+**New versions.** Record the changes in `CHANGELOG.md` and bump `version` in `manifest.json` (and in `package.json`): 1.0.2 for
+fixes, 1.1.0 for new features. The Web Store rejects a version equal to or lower than the
+published one. Then run `npm run package` and in the Dashboard go to **Package → Upload new package**.
 
-## Cómo exportar desde Google Authenticator
+## Exporting from Google Authenticator
 
-1. En el teléfono: Google Authenticator → menú ☰ → **Transferir cuentas** → **Exportar cuentas**.
-2. Selecciona las cuentas → **Siguiente**. Se muestran uno o varios QR.
-3. En la extensión pulsa **＋** y luego:
-   - **📷 Usar la cámara**: se abre una pestaña con la cámara (la primera vez Chrome pide permiso).
-     Pon el QR del móvil dentro del recuadro; si hay varios, pasa al siguiente en el móvil y se
-     irán sumando solos. Cuando estén todos, pulsa **Importar**. **O bien**
-   - haz una foto o captura del QR y súbela, arrástrala o pégala, **o**
-   - abre la imagen en una pestaña del navegador y pulsa **Escanear pestaña**. Si no lo encuentra,
-     pulsa **Seleccionar zona** y arrastra un recuadro sobre el QR; al leerlo vuelve sola a tu pestaña.
-4. Si hay varios QR (p. ej. uno por pestaña), escanéalos uno a uno: cambia de pestaña, vuelve a
-   abrir la extensión y pulsa **Escanear pestaña actual**. Lo ya leído se conserva aunque el
-   popup se cierre, y se indica qué QR faltan ("QR leídos: 1, 3 de 3. Faltan: 2").
-5. Revisa las cuentas detectadas y pulsa **Importar** (o **Cancelar** para descartar lo leído).
+1. On your phone: Google Authenticator → ☰ menu → **Transfer accounts** → **Export accounts**.
+2. Select the accounts → **Next**. One or more QR codes are shown.
+3. In the extension click **＋** and then:
+   - **Scan with camera**: a tab with the camera opens (the first time Chrome asks for permission).
+     Put the phone's QR code inside the frame; if there are several, move to the next one on the phone
+     and they add up automatically. When you have them all, click **Import**. **Or**
+   - take a photo or screenshot of the QR code and upload, drag or paste it, **or**
+   - open the image in a browser tab and click **Scan tab**. If it doesn't find it,
+     click **Select area** and drag a box over the QR code; once read, it returns to your tab on its own.
+4. If there are several QR codes (e.g. one per tab), scan them one by one: switch tabs, open the
+   extension again and click **Scan tab**. What has been read is kept even if the popup closes,
+   and it tells you which QR codes are missing ("QR codes read: 1, 3 of 3. Missing: 2").
+5. Review the detected accounts and click **Import** (or **Cancel** to discard what was read).
 
-> Las capturas de pantalla del QR de exportación contienen **todos tus secretos**. Bórralas
-> (también de la papelera y de la nube) cuando termines.
+> Screenshots of the export QR code contain **all your secrets**. Delete them
+> (also from the trash and the cloud) when you are done.
 
-## Estructura
+## Project structure
 
 ```
-manifest.json          versión, autor (author) y enlace del proyecto (homepage_url)
-LICENSE                licencia MIT
-PRIVACY.md             política de privacidad (la que se enlaza en la Chrome Web Store)
-CHANGELOG.md           cambios de cada versión
-_locales/              nombre y descripción de la extensión en cada idioma (los usa Chrome)
-icons/                 iconos de la extensión
-src/background.js      service worker: autobloqueo, bloqueo con la pantalla y vaciado del portapapeles
-src/offscreen/         documento oculto que vacía el portapapeles pasado el tiempo elegido
-src/popup/             interfaz del popup (popup.html, popup.css)
-  popup.js             arranque, creación de la bóveda, desbloqueo y navegación
-  ui.js                estado compartido, vistas, confirmación de contraseña
-  list.js              lista de códigos, teclado, relleno/copia, sugerencia por sitio
-  import.js            vista "Añadir" (QR, enlaces, alta manual)
-  edit.js              edición de cuentas
-  settings.js          ajustes, copia de seguridad, borrado y línea de versión/autor
-src/scan/              escáner con cámara en una pestaña propia; decodifica en un Web Worker
-src/select/            selección manual de la zona del QR sobre una captura de la pestaña
-src/ui/dom.js          utilidades de DOM compartidas (lista de importación, avisos)
-src/ui/i18n-boot.js    carga el idioma y traduce el HTML antes de arrancar cada página
-src/i18n/              textos de la interfaz: es.js (referencia), en.js, pt.js, fr.js
+manifest.json          version, author and project link (homepage_url)
+LICENSE                MIT license
+PRIVACY.md             privacy policy (the one linked from the Chrome Web Store)
+CHANGELOG.md           changes in each version
+_locales/              extension name and description in each language (used by Chrome)
+icons/                 extension icons
+src/background.js      service worker: auto-lock, lock with the screen and clipboard clearing
+src/offscreen/         hidden document that clears the clipboard after the chosen time
+src/popup/             popup interface (popup.html, popup.css)
+  popup.js             startup, vault creation, unlocking and navigation
+  ui.js                shared state, views, password confirmation
+  list.js              code list, keyboard, fill/copy, per-site suggestion
+  import.js            "Add" view (QR codes, links, manual entry)
+  edit.js              account editing
+  settings.js          settings, backup, wipe and version/author line
+src/scan/              camera scanner in its own tab; decodes in a Web Worker
+src/select/            manual selection of the QR area on a capture of the tab
+src/ui/dom.js          shared DOM utilities (import list, toasts)
+src/ui/i18n-boot.js    loads the language and translates the HTML before each page starts
+src/i18n/              interface texts: es.js (reference), en.js, pt.js, fr.js
 src/lib/
-  base32.js            codificación Base32 de las claves
-  totp.js              HOTP/TOTP con Web Crypto
-  migration.js         decodificador del protobuf otpauth-migration de Google Authenticator
-  otpauth.js           parseo/generación de enlaces otpauth://
-  accounts.js          validación y normalización de cuentas
-  vault.js             bóveda cifrada (chrome.storage.local + chrome.storage.session)
-  qr.js                lectura de QR desde imágenes (jsQR, cargado solo al escanear)
-  importer.js          importación acumulativa de varios QR (compartida popup/escáner)
-  sites.js             qué cuentas corresponden a la web abierta
-  autofill.js          rellenar el código en el campo de la página
-  i18n.js              traducciones: t(), plurales e idioma elegido
-src/vendor/jsQR.js     copiado por `npm install` (no editar)
-scripts/               vendor.mjs (copia jsQR) y package.sh (zip para la Web Store)
-test/                  tests con node:test (incluye un chrome.storage simulado)
+  base32.js            Base32 encoding of the keys
+  totp.js              HOTP/TOTP with Web Crypto
+  migration.js         decoder for Google Authenticator's otpauth-migration protobuf
+  otpauth.js           parsing/generation of otpauth:// links
+  accounts.js          account validation and normalization
+  vault.js             encrypted vault (chrome.storage.local + chrome.storage.session)
+  qr.js                QR reading from images (jsQR, loaded only when scanning)
+  importer.js          cumulative import of several QR codes (shared by popup/scanner)
+  sites.js             which accounts belong to the open site
+  autofill.js          fills in the code on the page's field
+  i18n.js              translations: t(), plurals and chosen language
+src/vendor/jsQR.js     copied by `npm install` (do not edit)
+scripts/               vendor.mjs (copies jsQR) and package.sh (zip for the Web Store)
+test/                  tests with node:test (includes a mocked chrome.storage)
 ```
 
-## Idiomas
+## Languages
 
-Los textos están en `src/i18n/<código>.js`. En el HTML se marcan con `data-i18n="clave"`
-(también `data-i18n-placeholder`, `-title` y `-alt`); en JavaScript se usa `t('clave', { n })`.
-Los valores `{ one, other }` son plurales y `{nombre}` se sustituye por el parámetro.
-No se usa `chrome.i18n` para la interfaz porque solo sigue el idioma del navegador.
+Texts live in `src/i18n/<code>.js`. In the HTML they are marked with `data-i18n="key"`
+(also `data-i18n-placeholder`, `-title` and `-alt`); in JavaScript use `t('key', { n })`.
+`{ one, other }` values are plurals and `{name}` is replaced by the parameter.
+`chrome.i18n` is not used for the interface because it only follows the browser language.
 
-Para añadir un idioma:
+To add a language:
 
-1. Copia `src/i18n/es.js` como `src/i18n/<código>.js` y traduce los valores.
-2. Regístralo en `DICTS` y `LANGUAGES` de `src/lib/i18n.js`.
-3. Añade `_locales/<código>/messages.json` (nombre, descripción y atajo en la Web Store y `chrome://extensions`).
-4. `npm test` comprueba que tenga las mismas claves, marcadores y plurales que el español.
+1. Copy `src/i18n/es.js` to `src/i18n/<code>.js` and translate the values.
+2. Register it in `DICTS` and `LANGUAGES` in `src/lib/i18n.js`.
+3. Add `_locales/<code>/messages.json` (name, description and shortcut in the Web Store and `chrome://extensions`).
+4. `npm test` checks that it has the same keys, placeholders and plurals as Spanish (the reference).
 
-## Modelo de seguridad
+## Security model
 
-- Los secretos solo se guardan **cifrados** en `chrome.storage.local`. Sin la contraseña maestra no se pueden leer.
-- Al desbloquear, la clave AES se guarda en `chrome.storage.session`: está solo en memoria,
-  se borra al cerrar el navegador y los content scripts no tienen acceso. Así no tienes que
-  escribir la contraseña cada vez que abres el popup, dentro del margen de autobloqueo.
-- La extensión no hace peticiones de red ni carga código remoto. CSP estricta (`script-src 'self'`, sin iframes ni objetos).
-- Permisos: `storage`, `activeTab` y `scripting` (escanear la pestaña, sugerir la cuenta y rellenar el código; solo en la pestaña donde pulsas el icono o el atajo, nunca en segundo plano), `alarms` e `idle` (autobloqueo y bloqueo con la pantalla), `offscreen` y `clipboardWrite` (vaciar el portapapeles tras copiar un código; configurable en Ajustes).
-  Ninguno muestra advertencias al instalar.
-  `clipboardRead` es **opcional**: solo se pide si activas "No borrar si después copias otra cosa" y se puede retirar desactivándolo. Se usa únicamente para comparar el portapapeles con el código copiado antes de vaciarlo.
-- Un service worker borra la clave de la sesión en cuanto vence el tiempo de inactividad o se bloquea la pantalla,
-  aunque no se abra el popup.
-- Antes de usar un código se comprueba la web (`siteCheck` en `lib/sites.js`). Solo se considera fiable un dominio asociado a la cuenta o, si no tiene ninguno, que el emisor sea el nombre del dominio (`github.com` para «GitHub»). Si la cuenta tiene dominios asociados, solo valen esos. Si la web imita el nombre (subdominios, guiones o cambios como `1`→`i` y `rn`→`m`), se avisa antes de rellenar o copiar. Las webs sin relación con el nombre no se pueden distinguir y solo se ofrece asociarlas; asocia tus dominios en "Editar → Sitios" para la máxima protección.
-- Tras 5 contraseñas incorrectas seguidas se impone una espera creciente.
-- Las bóvedas antiguas con menos iteraciones de PBKDF2 se vuelven a cifrar con el valor actual al desbloquear.
-- La copia de seguridad está cifrada con la contraseña maestra vigente al exportarla; no contiene secretos en claro.
-- Exportar pide de nuevo la contraseña si no se ha escrito en los últimos 2 minutos; borrar todo la pide siempre. Así, alguien que use tu navegador desbloqueado un momento puede ver códigos, pero no llevarse las claves.
-- La cámara no necesita permiso en el manifiesto: Chrome lo pide al abrir el escáner y se puede
-  revocar desde el icono de la barra de direcciones. El vídeo se procesa en local y no se guarda.
-  El escáner va en una pestaña porque el popup de una extensión no puede mostrar el aviso de permiso.
-- La contraseña maestra **no se puede recuperar**. Si la olvidas, borra los datos y vuelve a importar.
-- Tener el 2FA en el mismo equipo que tus contraseñas reduce la protección del "segundo factor".
-  Úsalo con cabeza y mantén también Google Authenticator en el móvil.
+- Secrets are only stored **encrypted** in `chrome.storage.local`. They cannot be read without the master password.
+- On unlock, the AES key is kept in `chrome.storage.session`: it lives only in memory,
+  is deleted when the browser closes and content scripts cannot access it. This way you don't have to
+  type the password every time you open the popup, within the auto-lock window.
+- The extension makes no network requests and loads no remote code. Strict CSP (`script-src 'self'`, no iframes or objects).
+- Permissions: `storage`, `activeTab` and `scripting` (scan the tab, suggest the account and fill in the code; only on the tab where you click the icon or press the shortcut, never in the background), `alarms` and `idle` (auto-lock and lock with the screen), `offscreen` and `clipboardWrite` (clear the clipboard after copying a code; configurable in Settings).
+  None of them shows warnings on install.
+  `clipboardRead` is **optional**: it is only requested if you turn on "Don't clear if you copy something else afterwards" and can be revoked by turning it off. It is used solely to compare the clipboard with the copied code before clearing it.
+- A service worker deletes the session key as soon as the inactivity time expires or the screen locks,
+  even if the popup is not opened.
+- Before using a code the site is checked (`siteCheck` in `lib/sites.js`). A site is only trusted if it is a domain linked to the account or, if the account has none, if the issuer is the domain's name (`github.com` for "GitHub"). If the account has linked domains, only those count. If the site imitates the name (subdomains, hyphens or swaps like `1`→`i` and `rn`→`m`), you are warned before filling in or copying. Sites unrelated to the name cannot be told apart and you are only offered to link them; link your domains in "Edit → Sites" for maximum protection.
+- After 5 wrong passwords in a row, an increasing wait is enforced.
+- Older vaults with fewer PBKDF2 iterations are re-encrypted with the current value on unlock.
+- The backup is encrypted with the master password in use when it was exported; it contains no plaintext secrets.
+- Exporting asks for the password again if it hasn't been typed in the last 2 minutes; deleting everything always asks for it. So someone using your unlocked browser for a moment can see codes, but cannot take the keys.
+- The camera needs no permission in the manifest: Chrome asks when the scanner opens and it can be
+  revoked from the icon in the address bar. The video is processed locally and never saved.
+  The scanner runs in a tab because an extension popup cannot show the permission prompt.
+- The master password **cannot be recovered**. If you forget it, delete the data and import again.
+- Keeping 2FA on the same computer as your passwords weakens the protection of the "second factor".
+  Use it wisely and keep Google Authenticator on your phone as well.
 
-## Ideas para siguientes versiones
+## Ideas for future versions
 
-- Generar QR `otpauth-migration` para devolver las cuentas al móvil.
-- Reordenar cuentas y marcarlas como favoritas.
-- Desbloqueo con passkey (WebAuthn PRF) en sistemas con Windows Hello o Touch ID.
-- Sincronización cifrada entre navegadores con `chrome.storage.sync`.
+- Generate `otpauth-migration` QR codes to move accounts back to the phone.
+- Reorder accounts and mark favorites.
+- Unlock with a passkey (WebAuthn PRF) on systems with Windows Hello or Touch ID.
+- Encrypted sync between browsers with `chrome.storage.sync`.
 
-## Autor y licencia
+## Author and license
 
-Hecho por **Andrés Yate** — [github.com/BgYato](https://github.com/BgYato).
+Made by **Andrés Yate** — [github.com/BgYato](https://github.com/BgYato).
 
-La extensión no recoge ni envía ningún dato: ver la [política de privacidad](PRIVACY.md).
+The extension does not collect or send any data: see the [privacy policy](PRIVACY.md).
 
-Publicado bajo licencia [MIT](LICENSE). Incluye [jsQR](https://github.com/cozmo/jsQR)
-(Apache 2.0) para leer los códigos QR.
+Released under the [MIT](LICENSE) license. Includes [jsQR](https://github.com/cozmo/jsQR)
+(Apache 2.0) to read QR codes.
 
-Esta extensión no está afiliada ni respaldada por Google. «Google Authenticator» es una marca
-de Google LLC y se menciona solo para indicar compatibilidad.
+This extension is not affiliated with or endorsed by Google. "Google Authenticator" is a trademark
+of Google LLC and is mentioned only to indicate compatibility.
