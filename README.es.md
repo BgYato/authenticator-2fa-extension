@@ -8,6 +8,8 @@ Importa las cuentas desde el **QR de exportación de Google Authenticator**
 
 **Versión 1.0.1** · Hecho por [Andrés Yate](https://github.com/BgYato) · Licencia [MIT](LICENSE) · [Política de privacidad](PRIVACY.md) · [Cambios](CHANGELOG.md)
 
+**[Instálala desde la Chrome Web Store](https://chromewebstore.google.com/detail/authenticator-2fa/eodaapdidnjppknfoflnfhlapogjkehg)**
+
 ![Authenticator 2FA: tus códigos 2FA, con la web abierta primero](store/en/captura-1-codigos.png)
 
 > **Nota:** Google no ofrece una API para leer los códigos de Authenticator asociados a la
